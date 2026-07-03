@@ -1,0 +1,102 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build sigtool",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-std=c++17",
+                "-O2",
+                "-Wall",
+                "-Wextra",
+                "-o", "${workspaceFolder}/sigtool.exe",
+                "${workspaceFolder}/sigtool.cpp",
+                "${workspaceFolder}/ecdsa_handler.cpp",
+                "${workspaceFolder}/rsa_pss_handler.cpp",
+                "${workspaceFolder}/utils.cpp",
+                "${workspaceFolder}/test_runner.cpp",
+                "${workspaceFolder}/benchmark.cpp",
+                "-I", "E:/utecrypto/openssl-4.0.0_windows/include",
+                "-L", "E:/utecrypto/openssl-4.0.0_windows",
+                "-lcrypto",
+                "-lssl",
+                "-lws2_32",
+                "-lgdi32",
+                "-ladvapi32",
+                "-lcrypt32",
+                "-luser32"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            },
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "Run: keygen ECDSA-P256",
+            "type": "shell",
+            "command": "${workspaceFolder}/sigtool.exe",
+            "args": [
+                "keygen",
+                "--algo", "ecdsa-p256",
+                "--pub",  "${workspaceFolder}/pub_p256.pem",
+                "--priv", "${workspaceFolder}/priv_p256.pem"
+            ],
+            "dependsOn": "Build sigtool",
+            "group": "test",
+            "presentation": { "reveal": "always", "panel": "shared" }
+        },
+        {
+            "label": "Run: keygen RSA-PSS-3072",
+            "type": "shell",
+            "command": "${workspaceFolder}/sigtool.exe",
+            "args": [
+                "keygen",
+                "--algo", "rsa-pss-3072",
+                "--pub",  "${workspaceFolder}/pub_rsa.pem",
+                "--priv", "${workspaceFolder}/priv_rsa.pem"
+            ],
+            "dependsOn": "Build sigtool",
+            "group": "test",
+            "presentation": { "reveal": "always", "panel": "shared" }
+        },
+        {
+            "label": "Run: All Tests",
+            "type": "shell",
+            "command": "${workspaceFolder}/sigtool.exe",
+            "args": ["test"],
+            "dependsOn": "Build sigtool",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+        },
+        {
+            "label": "Run: Benchmark",
+            "type": "shell",
+            "command": "${workspaceFolder}/sigtool.exe",
+            "args": ["bench"],
+            "dependsOn": "Build sigtool",
+            "group": "test",
+            "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+        },
+        {
+            "label": "Copy DLLs",
+            "type": "shell",
+            "command": "Copy-Item",
+            "args": [
+                "-Path", "E:/utecrypto/openssl-4.0.0_windows/libcrypto-4-x64.dll",
+                "-Destination", "${workspaceFolder}/",
+                "-Force"
+            ],
+            "presentation": { "reveal": "always", "panel": "shared" }
+        }
+    ]
+}

@@ -1,0 +1,372 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        // ═══════════════════════════════════════════════
+        // BUILD TASKS
+        // ═══════════════════════════════════════════════
+        {
+            "type": "shell",
+            "label": "🔨 Build (Release)",
+            "command": "C:\\msys64\\mingw64\\bin\\g++.exe",
+            "args": [
+                "-O3", "-DNDEBUG", "-Wall", "-Wextra", "-std=c++17",
+                "${workspaceFolder}\\main.cpp",
+                "-o", "${workspaceFolder}\\main.exe",
+                "-I", "E:\\HK6_Year3\\Crypto\\cryptopp_win\\include",
+                "-L", "E:\\HK6_Year3\\Crypto\\cryptopp_win",
+                "-lcryptopp"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": ["$gcc"],
+            "group": { "kind": "build", "isDefault": true },
+            "detail": "Build main.cpp với -O3 (Release)"
+        },
+        {
+            "type": "shell",
+            "label": "🔧 Build (Debug)",
+            "command": "C:\\msys64\\mingw64\\bin\\g++.exe",
+            "args": [
+                "-g", "-O0", "-Wall", "-Wextra", "-std=c++17",
+                "${workspaceFolder}\\main.cpp",
+                "-o", "${workspaceFolder}\\main_debug.exe",
+                "-I", "E:\\HK6_Year3\\Crypto\\cryptopp_win\\include",
+                "-L", "E:\\HK6_Year3\\Crypto\\cryptopp_win",
+                "-lcryptopp"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": ["$gcc"],
+            "group": "build",
+            "detail": "Build main.cpp với debug symbols"
+        },
+        {
+            "type": "shell",
+            "label": "🧹 Clean",
+            "command": "powershell.exe",
+            "args": [
+                "-Command",
+                "Remove-Item -Path '${workspaceFolder}\\main.exe','${workspaceFolder}\\main_debug.exe','${workspaceFolder}\\*.bin','${workspaceFolder}\\*.bin.json','${workspaceFolder}\\*.txt.json' -ErrorAction SilentlyContinue; Write-Host '✅ Clean done'"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "group": "build",
+            "detail": "Xóa file biên dịch và output"
+        },
+
+        // ═══════════════════════════════════════════════
+        // KAT — NIST Known Answer Tests
+        // ═══════════════════════════════════════════════
+        {
+            "type": "shell",
+            "label": "✅ Run KAT (All NIST Vectors)",
+            "command": "${workspaceFolder}\\main.exe",
+            "args": ["kat", "--kat", "vectors.json"],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "group": { "kind": "test", "isDefault": true },
+            "detail": "Chạy 15 NIST test vectors (ECB/CBC/OFB/CFB/CTR/GCM/CCM) → PASS/FAIL"
+        },
+
+        // ═══════════════════════════════════════════════
+        // BENCHMARK
+        // ═══════════════════════════════════════════════
+        {
+            "type": "shell",
+            "label": "📊 Benchmark (All Modes)",
+            "command": "${workspaceFolder}\\main.exe",
+            "args": ["benchmark"],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "group": "test",
+            "detail": "Benchmark tất cả modes: 1KB→8MB, throughput + latency"
+        },
+
+        // ═══════════════════════════════════════════════
+        // NEGATIVE TESTS
+        // ═══════════════════════════════════════════════
+        {
+            "type": "shell",
+            "label": "🔒 Negative Tests (Fail-Closed Demo)",
+            "command": "${workspaceFolder}\\main.exe",
+            "args": ["neg-test", "--key", "key.bin"],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "group": "test",
+            "detail": "Demo 5 tình huống fail-closed: wrong key/IV, tampered GCM, invalid IV length"
+        },
+
+        // ═══════════════════════════════════════════════
+        // CBC — Encrypt & Decrypt
+        // ═══════════════════════════════════════════════
+        {
+            "type": "shell",
+            "label": "🔐 Demo CBC: Encrypt input.txt",
+            "command": "${workspaceFolder}\\main.exe",
+            "args": [
+                "encrypt", "--mode", "cbc",
+                "--key", "key.bin",
+                "--in", "input.txt",
+                "--out", "demo_cbc.bin"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "group": "test",
+            "detail": "AES-128-CBC encrypt input.txt → demo_cbc.bin (auto-IV, sidecar JSON)"
+        },
+        {
+            "type": "shell",
+            "label": "🔓 Demo CBC: Decrypt demo_cbc.bin",
+            "command": "${workspaceFolder}\\main.exe",
+            "args": [
+                "decrypt", "--mode", "cbc",
+                "--key", "key.bin",
+                "--in", "demo_cbc.bin",
+                "--out", "demo_cbc_out.txt"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "group": "test",
+            "detail": "AES-128-CBC decrypt demo_cbc.bin → demo_cbc_out.txt (IV from sidecar)"
+        },
+
+        // ═══════════════════════════════════════════════
+        // GCM AEAD — Encrypt & Decrypt
+        // ═══════════════════════════════════════════════
+        {
+            "type": "shell",
+            "label": "🔐 Demo GCM: Encrypt input.txt (AEAD)",
+            "command": "${workspaceFolder}\\main.exe",
+            "args": [
+                "encrypt", "--mode", "gcm", "--aead",
+                "--key", "key.bin",
+                "--aad-text", "Lab01-Student-23110231",
+                "--in", "input.txt",
+                "--out", "demo_gcm.bin"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "group": "test",
+            "detail": "AES-128-GCM encrypt với AAD → demo_gcm.bin + sidecar (alg/iv/aad/tag)"
+        },
+        {
+            "type": "shell",
+            "label": "🔓 Demo GCM: Decrypt demo_gcm.bin (AEAD)",
+            "command": "${workspaceFolder}\\main.exe",
+            "args": [
+                "decrypt", "--mode", "gcm", "--aead",
+                "--key", "key.bin",
+                "--aad-text", "Lab01-Student-23110231",
+                "--in", "demo_gcm.bin",
+                "--out", "demo_gcm_out.txt"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "group": "test",
+            "detail": "AES-128-GCM decrypt + verify authentication tag"
+        },
+
+        // ═══════════════════════════════════════════════
+        // CCM AEAD — Encrypt & Decrypt
+        // ═══════════════════════════════════════════════
+        {
+            "type": "shell",
+            "label": "🔐 Demo CCM: Encrypt input.txt (AEAD)",
+            "command": "${workspaceFolder}\\main.exe",
+            "args": [
+                "encrypt", "--mode", "ccm", "--aead",
+                "--key", "key.bin",
+                "--aad-text", "CCM-Auth-Header",
+                "--in", "input.txt",
+                "--out", "demo_ccm.bin"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "group": "test",
+            "detail": "AES-128-CCM encrypt với AAD → demo_ccm.bin"
+        },
+        {
+            "type": "shell",
+            "label": "🔓 Demo CCM: Decrypt demo_ccm.bin (AEAD)",
+            "command": "${workspaceFolder}\\main.exe",
+            "args": [
+                "decrypt", "--mode", "ccm", "--aead",
+                "--key", "key.bin",
+                "--aad-text", "CCM-Auth-Header",
+                "--in", "demo_ccm.bin",
+                "--out", "demo_ccm_out.txt"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "group": "test",
+            "detail": "AES-128-CCM decrypt + verify authentication tag"
+        },
+
+        // ═══════════════════════════════════════════════
+        // CTR — Stream Mode
+        // ═══════════════════════════════════════════════
+        {
+            "type": "shell",
+            "label": "🔐 Demo CTR: Encrypt input.txt",
+            "command": "${workspaceFolder}\\main.exe",
+            "args": [
+                "encrypt", "--mode", "ctr",
+                "--key", "key.bin",
+                "--in", "input.txt",
+                "--out", "demo_ctr.bin"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "group": "test",
+            "detail": "AES-128-CTR encrypt (nonce-reuse detection active)"
+        },
+        {
+            "type": "shell",
+            "label": "🔓 Demo CTR: Decrypt demo_ctr.bin",
+            "command": "${workspaceFolder}\\main.exe",
+            "args": [
+                "decrypt", "--mode", "ctr",
+                "--key", "key.bin",
+                "--in", "demo_ctr.bin",
+                "--out", "demo_ctr_out.txt"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "group": "test",
+            "detail": "AES-128-CTR decrypt"
+        },
+
+        // ═══════════════════════════════════════════════
+        // ECB — Misuse Demo
+        // ═══════════════════════════════════════════════
+        {
+            "type": "shell",
+            "label": "⚠️ Demo ECB: Misuse Warning + Size Limit",
+            "command": "${workspaceFolder}\\main.exe",
+            "args": [
+                "encrypt", "--mode", "ecb",
+                "--key", "key.bin",
+                "--in", "input.txt",
+                "--out", "demo_ecb.bin"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "group": "test",
+            "detail": "ECB: demo WARNING + block >16KiB (insecure mode)"
+        },
+        {
+            "type": "shell",
+            "label": "⚠️ Demo ECB: Force Large File (--allow-ecb)",
+            "command": "${workspaceFolder}\\main.exe",
+            "args": [
+                "encrypt", "--mode", "ecb",
+                "--key", "key.bin",
+                "--in", "large_ecb.txt",
+                "--out", "demo_ecb_large.bin",
+                "--allow-ecb"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "group": "test",
+            "detail": "ECB với --allow-ecb: demo override size limit (DANGEROUS)"
+        },
+
+        // ═══════════════════════════════════════════════
+        // OFB & CFB
+        // ═══════════════════════════════════════════════
+        {
+            "type": "shell",
+            "label": "🔐 Demo OFB: Encrypt → Decrypt Round-trip",
+            "command": "powershell.exe",
+            "args": [
+                "-Command",
+                "& '${workspaceFolder}\\main.exe' encrypt --mode ofb --key key.bin --in input.txt --out demo_ofb.bin; & '${workspaceFolder}\\main.exe' decrypt --mode ofb --key key.bin --in demo_ofb.bin --out demo_ofb_out.txt; Write-Host '--- OFB Output:'; Get-Content demo_ofb_out.txt"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "group": "test",
+            "detail": "AES-128-OFB encrypt+decrypt round-trip"
+        },
+        {
+            "type": "shell",
+            "label": "🔐 Demo CFB: Encrypt → Decrypt Round-trip",
+            "command": "powershell.exe",
+            "args": [
+                "-Command",
+                "& '${workspaceFolder}\\main.exe' encrypt --mode cfb --key key.bin --in input.txt --out demo_cfb.bin; & '${workspaceFolder}\\main.exe' decrypt --mode cfb --key key.bin --in demo_cfb.bin --out demo_cfb_out.txt; Write-Host '--- CFB Output:'; Get-Content demo_cfb_out.txt"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "group": "test",
+            "detail": "AES-128-CFB encrypt+decrypt round-trip"
+        },
+
+        // ═══════════════════════════════════════════════
+        // XTS — Disk Encryption Mode
+        // ═══════════════════════════════════════════════
+        {
+            "type": "shell",
+            "label": "🔐 Demo XTS: Encrypt with 256-bit key",
+            "command": "powershell.exe",
+            "args": [
+                "-Command",
+                "& '${workspaceFolder}\\main.exe' encrypt --mode xts --key key256.bin --in input.txt --out demo_xts.bin; & '${workspaceFolder}\\main.exe' decrypt --mode xts --key key256.bin --in demo_xts.bin --out demo_xts_out.txt; Write-Host '--- XTS Output:'; Get-Content demo_xts_out.txt"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "group": "test",
+            "detail": "AES-256-XTS (disk encryption mode, requires 32-byte key)"
+        },
+
+        // ═══════════════════════════════════════════════
+        // KEY-HEX Demo
+        // ═══════════════════════════════════════════════
+        {
+            "type": "shell",
+            "label": "🔑 Demo --key-hex: AES-256-GCM with inline hex key",
+            "command": "${workspaceFolder}\\main.exe",
+            "args": [
+                "encrypt", "--mode", "gcm", "--aead",
+                "--key-hex", "603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4",
+                "--text", "Hello from aestool - AES-256-GCM!",
+                "--out", "demo_keyhex.bin"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "group": "test",
+            "detail": "Demo --key-hex với AES-256 key, input từ --text"
+        },
+
+        // ═══════════════════════════════════════════════
+        // NONCE REUSE DETECTION Demo
+        // ═══════════════════════════════════════════════
+        {
+            "type": "shell",
+            "label": "🛡️ Demo Nonce-Reuse Detection (GCM)",
+            "command": "powershell.exe",
+            "args": [
+                "-Command",
+                "Write-Host '=== Nonce Reuse Detection Demo ===' -ForegroundColor Cyan; Write-Host '1st encrypt (register nonce):'; & '${workspaceFolder}\\main.exe' encrypt --mode gcm --aead --key key.bin --iv iv.bin --in input.txt --out nr_test1.bin; Write-Host ''; Write-Host '2nd encrypt with SAME nonce (should be REJECTED):'; & '${workspaceFolder}\\main.exe' encrypt --mode gcm --aead --key key.bin --iv iv.bin --in input.txt --out nr_test2.bin; Write-Host 'Done.'"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "group": "test",
+            "detail": "Demo nonce-reuse rejection: lần 2 encrypt với cùng key+IV → bị từ chối"
+        },
+
+        // ═══════════════════════════════════════════════
+        // FULL DEMO — ALL IN ONE
+        // ═══════════════════════════════════════════════
+        {
+            "type": "shell",
+            "label": "🚀 Full Lab Demo (Build + KAT + Benchmark + Neg-test)",
+            "command": "powershell.exe",
+            "args": [
+                "-Command",
+                "Write-Host '==== BUILD ====' -ForegroundColor Yellow; & C:\\msys64\\mingw64\\bin\\g++.exe -O3 -DNDEBUG -std=c++17 '${workspaceFolder}\\main.cpp' -o '${workspaceFolder}\\main.exe' -I 'E:\\HK6_Year3\\Crypto\\cryptopp_win\\include' -L 'E:\\HK6_Year3\\Crypto\\cryptopp_win' -lcryptopp; if($LASTEXITCODE -eq 0){ Write-Host '==== KAT ====' -ForegroundColor Green; & '${workspaceFolder}\\main.exe' kat --kat vectors.json; Write-Host '==== BENCHMARK ====' -ForegroundColor Green; & '${workspaceFolder}\\main.exe' benchmark; Write-Host '==== NEGATIVE TESTS ====' -ForegroundColor Green; & '${workspaceFolder}\\main.exe' neg-test --key key.bin } else { Write-Host 'Build FAILED' -ForegroundColor Red }"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": ["$gcc"],
+            "group": "test",
+            "detail": "Build + chạy toàn bộ: KAT, Benchmark, Negative tests"
+        }
+    ]
+}

@@ -1,0 +1,135 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build pqtool (MSVC)",
+            "type": "shell",
+            "command": "cmd.exe",
+            "args": [
+                "/c",
+                "E:\\HK6_Year3\\Crypto\\Lab06\\build.bat"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": "$msCompile",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "Build pqtool (Debug)",
+            "type": "shell",
+            "command": "cmd.exe",
+            "args": [
+                "/c",
+                "E:\\HK6_Year3\\Crypto\\Lab06\\build_debug.bat"
+            ],
+            "group": "build",
+            "problemMatcher": "$msCompile",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "Run Tests",
+            "type": "shell",
+            "command": "cmd.exe",
+            "args": [
+                "/c",
+                "E:\\HK6_Year3\\Crypto\\Lab06\\build\\pqtool.exe test"
+            ],
+            "group": "test",
+            "dependsOn": "Build pqtool (MSVC)",
+            "options": {
+                "cwd": "${workspaceFolder}\\build"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "clear": true
+            }
+        },
+        {
+            "label": "Run Benchmark (all, 200 rounds)",
+            "type": "shell",
+            "command": "cmd.exe",
+            "args": [
+                "/c",
+                "E:\\HK6_Year3\\Crypto\\Lab06\\build\\pqtool.exe bench --algo all --rounds 200"
+            ],
+            "group": "test",
+            "dependsOn": "Build pqtool (MSVC)",
+            "options": {
+                "cwd": "${workspaceFolder}\\build"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "clear": true
+            }
+        },
+        {
+            "label": "Show Algorithm Info",
+            "type": "shell",
+            "command": "cmd.exe",
+            "args": [
+                "/c",
+                "E:\\HK6_Year3\\Crypto\\Lab06\\build\\pqtool.exe info"
+            ],
+            "group": "test",
+            "options": {
+                "cwd": "${workspaceFolder}\\build"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "clear": true
+            }
+        },
+        {
+            "label": "Demo: Full workflow",
+            "type": "shell",
+            "command": "powershell.exe",
+            "args": [
+                "-ExecutionPolicy", "Bypass",
+                "-File", "${workspaceFolder}\\demo.ps1"
+            ],
+            "group": "test",
+            "dependsOn": "Build pqtool (MSVC)",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "clear": true
+            }
+        }
+    ]
+}

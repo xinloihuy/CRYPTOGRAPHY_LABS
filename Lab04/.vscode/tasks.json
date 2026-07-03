@@ -1,0 +1,168 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build All",
+      "dependsOn": [
+        "Build hashtool",
+        "Build pki_parser",
+        "Build md5_collision",
+        "Build length_extension",
+        "Build benchmark"
+      ],
+      "dependsOrder": "parallel",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Build hashtool",
+      "type": "shell",
+      "command": "g++",
+      "args": [
+        "-std=c++17",
+        "-O2",
+        "-Wall",
+        "-I", "E:/utecrypto/openssl-4.0.0_windows/include",
+        "-L", "E:/utecrypto/openssl-4.0.0_windows",
+        "${workspaceFolder}/src/hashtool.cpp",
+        "-o", "${workspaceFolder}/bin/hashtool.exe",
+        "-lcrypto",
+        "-lws2_32",
+        "-lgdi32",
+        "-lcrypt32"
+      ],
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": "$gcc"
+    },
+    {
+      "label": "Build pki_parser",
+      "type": "shell",
+      "command": "g++",
+      "args": [
+        "-std=c++17",
+        "-O2",
+        "-Wall",
+        "-I", "E:/utecrypto/openssl-4.0.0_windows/include",
+        "-L", "E:/utecrypto/openssl-4.0.0_windows",
+        "${workspaceFolder}/src/pki_parser.cpp",
+        "-o", "${workspaceFolder}/bin/pki_parser.exe",
+        "-lcrypto",
+        "-lssl",
+        "-lws2_32",
+        "-lgdi32",
+        "-lcrypt32"
+      ],
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": "$gcc"
+    },
+    {
+      "label": "Build md5_collision",
+      "type": "shell",
+      "command": "g++",
+      "args": [
+        "-std=c++17",
+        "-O2",
+        "-Wall",
+        "-I", "E:/utecrypto/openssl-4.0.0_windows/include",
+        "-L", "E:/utecrypto/openssl-4.0.0_windows",
+        "${workspaceFolder}/src/md5_collision.cpp",
+        "-o", "${workspaceFolder}/bin/md5_collision.exe",
+        "-lcrypto",
+        "-lws2_32",
+        "-lgdi32",
+        "-lcrypt32"
+      ],
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": "$gcc"
+    },
+    {
+      "label": "Build length_extension",
+      "type": "shell",
+      "command": "g++",
+      "args": [
+        "-std=c++17",
+        "-O2",
+        "-Wall",
+        "-I", "E:/utecrypto/openssl-4.0.0_windows/include",
+        "-L", "E:/utecrypto/openssl-4.0.0_windows",
+        "${workspaceFolder}/src/length_extension.cpp",
+        "-o", "${workspaceFolder}/bin/length_extension.exe",
+        "-lcrypto",
+        "-lws2_32",
+        "-lgdi32",
+        "-lcrypt32"
+      ],
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": "$gcc"
+    },
+    {
+      "label": "Build benchmark",
+      "type": "shell",
+      "command": "g++",
+      "args": [
+        "-std=c++17",
+        "-O2",
+        "-Wall",
+        "-I", "E:/utecrypto/openssl-4.0.0_windows/include",
+        "-L", "E:/utecrypto/openssl-4.0.0_windows",
+        "${workspaceFolder}/src/benchmark.cpp",
+        "-o", "${workspaceFolder}/bin/benchmark.exe",
+        "-lcrypto",
+        "-lws2_32",
+        "-lgdi32",
+        "-lcrypt32"
+      ],
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": "$gcc"
+    },
+    {
+      "label": "Run hashtool KAT",
+      "type": "shell",
+      "command": "${workspaceFolder}/bin/hashtool.exe",
+      "args": ["--kat"],
+      "group": "test",
+      "presentation": { "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "Run benchmark",
+      "type": "shell",
+      "command": "${workspaceFolder}/bin/benchmark.exe",
+      "group": "test",
+      "presentation": { "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "Run MD5 collision demo",
+      "type": "shell",
+      "command": "${workspaceFolder}/bin/md5_collision.exe",
+      "group": "test",
+      "presentation": { "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "Run length-extension demo",
+      "type": "shell",
+      "command": "${workspaceFolder}/bin/length_extension.exe",
+      "group": "test",
+      "presentation": { "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "Run PKI parser (test cert)",
+      "type": "shell",
+      "command": "${workspaceFolder}/bin/pki_parser.exe",
+      "args": ["${workspaceFolder}/certs/test_cert.pem"],
+      "group": "test",
+      "presentation": { "reveal": "always", "panel": "shared" }
+    }
+  ]
+}

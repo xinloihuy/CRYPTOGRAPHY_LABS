@@ -1,0 +1,167 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build rsatool",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-std=c++17",
+                "-O2",
+                "-Wall",
+                "-Wextra",
+                "-I", "E:/utecrypto/openssl-4.0.0_windows/include",
+                "src/main.cpp",
+                "src/utils.cpp",
+                "src/key_mgmt.cpp",
+                "src/rsa_oaep.cpp",
+                "src/aes_gcm.cpp",
+                "src/hybrid.cpp",
+                "src/oaep_manual.cpp",
+                "src/benchmark.cpp",
+                "src/tests.cpp",
+                "-L", "E:/utecrypto/openssl-4.0.0_windows",
+                "-l:libcrypto.dll.a",
+                "-l:libssl.dll.a",
+                "-o", "rsatool.exe"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": "$gcc",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "Build rsatool (Debug)",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-std=c++17",
+                "-g",
+                "-O0",
+                "-Wall",
+                "-Wextra",
+                "-I", "E:/utecrypto/openssl-4.0.0_windows/include",
+                "src/main.cpp",
+                "src/utils.cpp",
+                "src/key_mgmt.cpp",
+                "src/rsa_oaep.cpp",
+                "src/aes_gcm.cpp",
+                "src/hybrid.cpp",
+                "src/oaep_manual.cpp",
+                "src/benchmark.cpp",
+                "src/tests.cpp",
+                "-L", "E:/utecrypto/openssl-4.0.0_windows",
+                "-l:libcrypto.dll.a",
+                "-l:libssl.dll.a",
+                "-o", "rsatool_debug.exe"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": "$gcc",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "Run Tests",
+            "type": "shell",
+            "command": "cmd",
+            "args": [
+                "/c",
+                "copy /Y E:\\utecrypto\\openssl-4.0.0_windows\\libcrypto-4-x64.dll . && copy /Y E:\\utecrypto\\openssl-4.0.0_windows\\libssl-4-x64.dll . && .\\rsatool.exe test"
+            ],
+            "dependsOn": "Build rsatool",
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "clear": false
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "Run Benchmark",
+            "type": "shell",
+            "command": "cmd",
+            "args": [
+                "/c",
+                "copy /Y E:\\utecrypto\\openssl-4.0.0_windows\\libcrypto-4-x64.dll . && copy /Y E:\\utecrypto\\openssl-4.0.0_windows\\libssl-4-x64.dll . && .\\rsatool.exe benchmark"
+            ],
+            "dependsOn": "Build rsatool",
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "clear": false
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "Copy DLLs",
+            "type": "shell",
+            "command": "cmd",
+            "args": [
+                "/c",
+                "copy /Y E:\\utecrypto\\openssl-4.0.0_windows\\libcrypto-4-x64.dll . && copy /Y E:\\utecrypto\\openssl-4.0.0_windows\\libssl-4-x64.dll . && echo DLLs copied!"
+            ],
+            "group": "none",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "Quick Demo",
+            "type": "shell",
+            "command": "cmd",
+            "args": [
+                "/c",
+                "copy /Y E:\\utecrypto\\openssl-4.0.0_windows\\libcrypto-4-x64.dll . && copy /Y E:\\utecrypto\\openssl-4.0.0_windows\\libssl-4-x64.dll . && echo Hello RSA-OAEP Hybrid Encryption > demo_msg.txt && .\\rsatool.exe keygen --bits 3072 --pub pub.pem --priv priv.pem && .\\rsatool.exe encrypt --in demo_msg.txt --pub pub.pem --out demo_ct.bin && .\\rsatool.exe decrypt --in demo_ct.bin --priv priv.pem --out demo_dec.txt && echo === Original === && type demo_msg.txt && echo === Decrypted === && type demo_dec.txt"
+            ],
+            "dependsOn": "Build rsatool",
+            "group": "none",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "clear": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        }
+    ]
+}
