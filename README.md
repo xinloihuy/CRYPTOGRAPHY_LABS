@@ -66,14 +66,5 @@ Ghi chú về bảo mật và triển khai
 - Tránh rò rỉ thông tin qua lỗi (normalize error codes), sử dụng so sánh constant-time khi cần.
 - Với ECDSA, cân nhắc RFC 6979 (deterministic nonce) nếu muốn loại bỏ dependency vào RNG cho nonce.
 
-Đóng góp
-- Nếu bạn muốn đóng góp: fork repository → tạo branch riêng → mở PR mô tả thay đổi.
-- Ghi rõ lab nào, chức năng mới, và kèm bài test nếu thêm logic.
-
-License & Liên hệ
-- Thêm thông tin license ở root nếu muốn (MIT/BSD/GPL).
-- Nếu cần trợ giúp, mở Issue hoặc liên hệ tác giả/giảng viên trong metadata của lab.
-
----
 
 Tài liệu chi tiết cho từng lab nằm trong thư mục Lab03/ và Lab05/ — xem các README bên trong để biết hướng dẫn build và CLI cụ thể.
